@@ -19,14 +19,14 @@
       </a-tab-pane>
     </a-tabs>
     <div style="margin: 12px 12px 0;">
-      <transition name="page-toggle">
-        <keep-alive v-if="multipage">
-          <router-view v-if="reloadFlag"/>
-        </keep-alive>
-        <template v-else>
-          <router-view v-if="reloadFlag"/>
-        </template>
-      </transition>
+      <!-- update-begin-author:taoyan date:20201221 for:此处删掉transition标签 不知道为什么加上后 页面路由切换的时候即1及菜单切到2及菜单的时候 两个菜单页面会同时出现300-500秒左右 -->
+      <keep-alive v-if="multipage">
+        <router-view v-if="reloadFlag"/>
+      </keep-alive>
+      <template v-else>
+        <router-view v-if="reloadFlag"/>
+      </template>
+      <!-- update-end-author:taoyan date:20201221 for:此处删掉transition标签 不知道为什么加上后 页面路由切换的时候即1及菜单切到2及菜单的时候 两个菜单页面会同时出现300-500秒左右 -->
     </div>
   </global-layout>
 </template>
@@ -171,7 +171,7 @@
 
       // update-begin-author:sunjianlei date:20200120 for: 动态更改页面标题
       changeTitle(title) {
-        let projectTitle = "Jeecg-Boot 企业级快速开发平台"
+        let projectTitle = "Jeecg-Boot 企业级低代码平台"
         // 首页特殊处理
         if (this.$route.path === indexKey) {
           document.title = projectTitle
@@ -186,7 +186,12 @@
       },
       tabCallBack() {
         this.$nextTick(() => {
-          triggerWindowResizeEvent()
+          //update-begin-author:taoyan date: 20201211 for:【新版】online报错 JT-100
+         setTimeout(()=>{
+           //省市区组件里面给window绑定了个resize事件 导致切换页面的时候触发了他的resize，但是切换页面，省市区组件还没被销毁前就触发了该事件，导致控制台报错，加个延迟
+           triggerWindowResizeEvent()
+         },20)
+          //update-end-author:taoyan date: 20201211 for:【新版】online报错 JT-100
         })
       },
       editPage(key, action) {

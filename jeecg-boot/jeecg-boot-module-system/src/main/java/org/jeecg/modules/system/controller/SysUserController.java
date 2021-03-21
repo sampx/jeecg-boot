@@ -298,7 +298,6 @@ public class SysUserController {
     /**
      * 修改密码
      */
-    //@RequiresRoles({"admin"})
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     public Result<?> changePassword(@RequestBody SysUser sysUser) {
         SysUser u = this.sysUserService.getOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, sysUser.getUsername()));
@@ -460,7 +459,7 @@ public class SysUserController {
                         successLines++;
                     } catch (Exception e) {
                         errorLines++;
-                        String message = e.getMessage();
+                        String message = e.getMessage().toLowerCase();
                         int lineNumber = i + 1;
                         // 通过索引名判断出错信息
                         if (message.contains(CommonConstant.SQL_INDEX_UNIQ_SYS_USER_USERNAME)) {
@@ -889,8 +888,12 @@ public class SysUserController {
                 return result;
             }
         }
-
-		if (!smscode.equals(code)) {
+        if(null == code){
+            result.setMessage("手机验证码失效，请重新获取");
+            result.setSuccess(false);
+            return result;
+        }
+		if (!smscode.equals(code.toString())) {
 			result.setMessage("手机验证码错误");
 			result.setSuccess(false);
 			return result;
@@ -1042,7 +1045,7 @@ public class SysUserController {
 				 username = JwtUtil.getUsername(token);				
 			}
 
-			log.info(" ------ 通过令牌获取部分用户信息，当前用户： " + username);
+			log.debug(" ------ 通过令牌获取部分用户信息，当前用户： " + username);
 
 			// 根据用户名查询用户信息
 			SysUser sysUser = sysUserService.getUserByName(username);
@@ -1052,7 +1055,7 @@ public class SysUserController {
 			map.put("sysUserName", sysUser.getRealname()); // 当前登录用户真实名称
 			map.put("sysOrgCode", sysUser.getOrgCode()); // 当前登录用户部门编号
 
-			log.info(" ------ 通过令牌获取部分用户信息，已获取的用户信息： " + map);
+			log.debug(" ------ 通过令牌获取部分用户信息，已获取的用户信息： " + map);
 
 			return Result.ok(map);
 		} catch (Exception e) {

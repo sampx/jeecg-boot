@@ -22,7 +22,6 @@ const service = axios.create({
 
 const err = (error) => {
   if (error.response) {
-    let that=this;
     let data = error.response.data
     const token = Vue.ls.get(ACCESS_TOKEN)
     console.log("------异常响应------",token)
@@ -105,7 +104,7 @@ service.interceptors.request.use(config => {
   if (!tenantid) {
     tenantid = 0;
   }
-  config.headers[ 'tenant_id' ] = tenantid
+  config.headers[ 'tenant-id' ] = tenantid
   //update-end-author:taoyan date:2020707 for:多租户
   if(config.method=='get'){
     if(config.url.indexOf("sys/dict/getDictItems")<0){
